@@ -113,19 +113,30 @@ const cleanup = () => {
             console.log(`Downloading dialog.html as index.html...`);
         
             let html = await request(sources.ezytdl.dialog_html);
-
-            const spacing = html.split(`</head`)[0].split(`\n`).filter(o => o.trim()).slice(-1)[0].split(`<`)[0]
-
-            html = html.replace(`</head>`, spacing + `<script src="../ui.js"></script>\n</head>`)
         
             fs.writeFileSync(path.join(htmlDir, `index.html`), html);    
         } else console.log(`html dir already exists! Skipping initialization...`);
+
+        let html = fs.readFileSync(path.join(htmlDir, `index.html`)).toString();
+
+        const spacing = html.split(`</head`)[0].split(`\n`).filter(o => o.trim()).slice(-1)[0].split(`<`)[0];
+
+        const scripts = [`ui.js`, `cookie.js`];
+
+        for(const script of scripts) {
+            if(!html.includes(script)) {
+                console.log(`Adding ${script} to index.html...`);
+                html = html.replace(`</head>`, spacing + `<script src="../${script}"></script>\n</head>`);
+            } else console.log(`${script} already exists in index.html! Skipping...`);
+        }
+
+        fs.writeFileSync(path.join(htmlDir, `index.html`), html);
 
         console.log(`Creating "dist/" dir`);
     
         fs.mkdirSync(distDir);
     
-        const manifestFiles = fs.readdirSync(buildDir).filter(f => f.endsWith(`.json`)).map(f => Object.assign({ name: f.split(`.`).slice(0, -1).join(`.`), manifestExt: require(`./build/${f}`) }));
+        const manifestFiles = fs.readdirSync(buildDir).filter(f => f.endsWith(`.json`) || f.endsWith(`.js`)).map(f => Object.assign({ name: f.split(`.`).slice(0, -1).join(`.`), manifestExt: require(`./build/${f}`) }));
     
         console.log(`Creating ${manifestFiles.length} output dirs... (${manifestFiles.map(o => o.name).join(`, `)})`);
     
