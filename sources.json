@@ -1,0 +1,8 @@
+{
+    "ezytdl": {
+        "url": "https://github.com/sylviiu/ezytdl",
+        "branch": "main",
+        "dialog_html": "https://raw.githubusercontent.com/sylviiu/ezytdl/2.0.0/html/dialog.html",
+        "checkout_paths": [ "html/assets" ]
+    }
+}

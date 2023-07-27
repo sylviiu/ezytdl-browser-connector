@@ -1,0 +1,25 @@
+{
+  "name": "ezytdl-browser-connector",
+  "version": "1.0.0",
+  "description": "the browser connector for ezytdl",
+  "main": "index.js",
+  "scripts": {
+    "auto": "nodemon --ignore dist/ build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sylviiu/ezytdl-browser-connector.git"
+  },
+  "keywords": [
+    "ezytdl",
+    "yt-dlp",
+    "firefox",
+    "chrome"
+  ],
+  "author": "Syl <hi@sylviiu.dev>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sylviiu/ezytdl-browser-connector/issues"
+  },
+  "homepage": "https://github.com/sylviiu/ezytdl-browser-connector#readme"
+}

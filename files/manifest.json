@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "html/index.html",
+        "default_title": "ezytdl browser connector",
+        "default_icon": "res/icon-disabled.png"
+    },
+    "icons": {
+        "48": "res/icon-enabled.png"
+    },
+    "background": {
+        "service_worker": "connection.js"
+    },
+    "permissions": [ "tabs", "storage" ]
+}
