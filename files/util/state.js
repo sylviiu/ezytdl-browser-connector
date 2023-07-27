@@ -5,8 +5,6 @@ const stateObj = {
     hooks: [],
 };
 
-const stateHooks = [];
-
 const setState = async (newState={}) => {
     const currentStateString = JSON.stringify(stateObj.state);
 
@@ -28,14 +26,16 @@ const setState = async (newState={}) => {
         });
     })
 
-    console.log(`setState [after]`, newState)
+    console.log(`setState [after]`, newState, `${stateObj.hooks.length} hook(s)`)
 
     if(currentStateString == JSON.stringify(stateObj.state)) {
         stateObj.state = newState;
     
-        for(const hook of stateHooks) hook(stateObj.state);
+        for(const hook of stateObj.hooks) {
+            console.log(`running hook!`, hook);
+            hook(newState);
+        };
+
         chrome.runtime.sendMessage({ type: `state`, data: stateObj.state });
     }
 };
-
-setState({ status: `disconnected` });

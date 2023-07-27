@@ -1,22 +1,27 @@
 const handle = ({ type, data }) => {
-    if(type == `verifyConnect`) {
-        return verifyConnect(data);
-    } else if(type == `connect`) {
-        return connect(true);
-    } else if(type == `kill`) {
-        return kill();
-    } else if(type == `purge`) {
-        return purge();
-    } else if(type == `send`) {
-        return send(...data);
-    } else if(type == `vars`) {
-        return {vars, comms}
-    } else if(type == `state`) {
-        return stateObj.state;
+    switch(type) {
+        case `verifyConnect`:
+            return verifyConnect(data);
+        case `connect`:
+            return connect(true);
+        case `kill`:
+            return kill();
+        case `purge`:
+            return purge();
+        case `send`:
+            return send(data);
+        case `vars`:
+            return {vars, comms}
+        case `state`:
+            return stateObj.state;
+        default:
+            return null;
     }
 }
 
-chrome.runtime.onMessage.addListener(async (o, sender, res) => {
+chrome.runtime.onMessage.addListener(async o => {
+    console.log(`received message!`, o);
+
     const single = !Array.isArray(o);
 
     if(single) o = [o];
@@ -30,18 +35,18 @@ chrome.runtime.onMessage.addListener(async (o, sender, res) => {
 
         const response = handle(obj);
 
-        const add = () => retObj[i] = response;
+        const add = (val) => retObj[i] = val;
 
         if(response && response.then) {
             promises.push(response.then(add));
         } else {
-            add();
+            add(response);
         };
     }
 
     if(promises.length) await Promise.all(promises);
 
-    return res(single ? retObj[0] : retObj);
+    chrome.runtime.sendMessage({ type: `refreshVars`, data: retObj });
 })
 
 chrome.action.onClicked.addListener(async (tab) => {

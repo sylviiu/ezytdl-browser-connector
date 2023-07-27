@@ -1,16 +1,21 @@
-const scripts = [
-    "util/bridge.js",
-    "util/state.js",
-    "util/constants.js",
-    "util/pending.js",
-    "util/comms.js",
-    "util/encryptMessage.js",
-    "util/pemToBinary.js"
-];
+if(typeof importScripts == `function`) {
+    const scripts = [
+        "util/bridge.js",
+        "util/state.js",
+        "util/constants.js",
+        "util/pending.js",
+        "util/comms.js",
+        "util/system.js",
+        "util/encryptMessage.js",
+        "util/pemToBinary.js"
+    ];
+    
+    importScripts(...scripts.map(s => `./${s}`));
+    
+    console.log(`loaded ${scripts.length} scripts! (${scripts.map(s => s.split(`/`).slice(-1)[0]).join(`, `)})`)
+}
 
-importScripts(...scripts.map(s => `./${s}`));
-
-console.log(`loaded ${scripts.length} scripts! (${scripts.map(s => s.split(`/`).slice(-1)[0]).join(`, `)})`)
+setState({ status: `disconnected` });
 
 let usingSocket = null;
 
@@ -201,16 +206,4 @@ const connect = (doManual=false) => {
     return promise;
 };
 
-/*let timeout;
-
-const startTimeout = () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(async () => {
-        if(!running && stateObj.state.status == `autoconnect`) {
-            console.log(`attempting auto connection`);
-            connect().then(startTimeout);
-        } else {
-            setTimeout(() => startTimeout(), 5000);
-        }
-    }, 5000);
-}*/
+connect(false);

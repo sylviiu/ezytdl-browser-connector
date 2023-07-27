@@ -1,1 +1,5 @@
-{}
+{
+    "background": {
+        "service_worker": "connection.js"
+    }
+}

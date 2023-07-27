@@ -6,10 +6,12 @@
         "default_icon": "res/icon-disabled.png"
     },
     "icons": {
-        "48": "res/icon-enabled.png"
+        "64": "res/icon-enabled.png"
     },
-    "background": {
-        "service_worker": "connection.js"
-    },
-    "permissions": [ "tabs", "storage" ]
+    "background": {},
+    "host_permissions": [ "*://*/*" ],
+    "permissions": [ "tabs", "storage", "cookies" ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
 }

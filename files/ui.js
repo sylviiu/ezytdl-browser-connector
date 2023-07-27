@@ -1,24 +1,43 @@
 console.log(`ui loaded!`);
 
+const sendRequest = async ({
+    cookies=true
+}={}) => {
+    browser.tabs.query({ active: true, currentWindow: true }).then(async tabs => {
+        const tab = tabs[0];
+
+        if(tab) {
+            const url = tab.url;
+
+            if(url) {
+                const obj = {
+                    query: url,
+                    cookies: cookies ? (await parseCookies({ url })) : null
+                }
+
+                console.log(obj)
+
+                chrome.runtime.sendMessage({
+                    type: `send`,
+                    data: {
+                        type: `listFormats`,
+                        data: [ obj ]
+                    }
+                });
+            }
+        }
+    });
+}
+
 const vars = {};
 
-const refreshVars = async () => {
-    const types = [{ type: `vars` }, { type: `state` }];
+const types = [{ type: `vars` }, { type: `state` }];
 
-    const newVars = await chrome.runtime.sendMessage(types);
-
-    for(const i in newVars) {
-        Object.assign(vars, { [types[i].type]: newVars[i] });
-    }
-
-    console.log(`refreshed vars`, vars)
-}
+const refreshVars = async () => chrome.runtime.sendMessage(types);
 
 let refreshState = () => {}
 
 const run = async () => {
-    document.body.style.opacity = 0;
-
     const containers = {
         content: document.getElementById(`contentDiv`),
         inputs: document.getElementById(`inputs`),
@@ -27,13 +46,15 @@ const run = async () => {
 
     containers.inputs.classList.add(`d-none`)
 
-    document.body.classList.remove(`justify-content-center`);
-    document.body.classList.add(`justify-content-between`);
-
     containers.content.style.height = `100%`
     containers.content.classList.add(`d-flex`);
     containers.content.classList.add(`flex-column`);
     containers.content.classList.add(`justify-content-between`);
+
+    containers.buttons.classList.remove(`d-flex`)
+
+    document.body.classList.remove(`justify-content-center`);
+    document.body.classList.add(`justify-content-between`);
 
     const button = document.getElementById(`button`).cloneNode(true);
 
@@ -50,15 +71,11 @@ const run = async () => {
 
     const states = {
         reset: () => new Promise(async res => {
-            const [ { vars } ] = await chrome.runtime.sendMessage([
-                { type: `vars` }
-            ]);
-
-            title.innerHTML = vars.manifestData.name.replace(/-/g, ` `);
+            title.innerHTML = `ezytdl browser connector`
 
             const footerStrings = [];
 
-            if(vars.manifestData && vars.manifestData.version) footerStrings.push(`v${vars.manifestData.version}`);
+            if(vars.vars && vars.vars.manifestData && vars.vars.manifestData.version) footerStrings.push(`v${vars.vars.manifestData.version}`);
 
             footer.innerHTML = footerStrings.join(`, `);
 
@@ -137,9 +154,36 @@ const run = async () => {
             description.innerHTML = `Setting up encryption with the application...`;
         },
         ready: () => {
+            console.log(vars)
+
+            const { name, version, fingerprint } = vars.state.session;
+
             title.innerHTML = `Connected!`;
 
-            description.innerHTML = `You're connected to ezytdl!`;
+            description.innerHTML = `Connected to ${name} v${version}`;
+
+            const smallerDescription = description.cloneNode(true);
+            smallerDescription.style.marginTop = `16px`;
+            smallerDescription.innerHTML = `Fingerprint: ${fingerprint}`;
+            smallerDescription.style.fontSize = `0.6em`;
+
+            description.innerHTML += smallerDescription.outerHTML;
+
+            const authSend = button.cloneNode(true);
+
+            authSend.querySelector(`#txt`).innerHTML = `Send webpage (with auth)`;
+            authSend.setAttribute(`title`, `Send the current webpage to ezytdl, with authentication.`)
+            authSend.onclick = () => sendRequest();
+
+            containers.buttons.append(authSend);
+
+            const sendPage = button.cloneNode(true);
+
+            sendPage.querySelector(`#txt`).innerHTML = `Send webpage`;
+            sendPage.setAttribute(`title`, `Send the current webpage to ezytdl, without authentication.`)
+            sendPage.onclick = () => sendRequest({ cookies: false });
+
+            containers.buttons.append(sendPage);
 
             const cancel = button.cloneNode(true);
 
@@ -177,7 +221,6 @@ const run = async () => {
 
             if(vars.state && vars.state.status) {
                 await refreshState();
-                document.body.style.opacity = 1;
                 res();
             } else {
                 setTimeout(res, 100);
@@ -187,7 +230,15 @@ const run = async () => {
 };
 
 chrome.runtime.onMessage.addListener(({ type, data }) => {
-    vars[type] = data;
+    if(type == `refreshVars`) {
+        for(const i in data) {
+            Object.assign(vars, { [types[i].type]: data[i] });
+        }
+    
+        console.log(`refreshed vars`, vars)
+    } else {
+        vars[type] = data;
+    }
     refreshState();
 });
 

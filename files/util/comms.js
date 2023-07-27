@@ -35,8 +35,8 @@ const startEncryptedComms = ({ session, socket, key }) => new Promise(async res 
                 res();
             }
         });
-        
-        setState({ status: `ready` });
+
+        setState({ status: `ready`, session });
     
         send({ type: `ready` });
     
