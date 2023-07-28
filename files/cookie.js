@@ -27,30 +27,29 @@ const parseCookies = (filter={}) => new Promise(async (res, rej) => {
         "# This is a generated file! Do not edit.\n\n",
     ];
 
+    let cookiesObj = {};
+
+    console.log("Stores: ", stores.length);
+    console.log("Filter: ", filter);
+
     for (var store of stores) {
         console.log("Store: " + store.id);
         try {
-            query = browser.runtime.getBrowserInfo().version >= "59.0" ? {
-                ...stores.filter,
-                ...{ storeId: store.id, firstPartyDomain: null },
-            } : { 
-                ...stores.filter, 
-                ...{ storeId: store.id } 
-            };
+            query = Object.assign({ storeId: store.id }, filter);
 
-            cookies = await browser.cookies.getAll(query);
+            if(browser.runtime.getBrowserInfo().version >= "59.0") Object.assign(query, { firstPartyDomain: null });
 
-            res(header.concat(cookies.map(formatCookie)).join(""));
+            cookiesObj = await browser.cookies.getAll(query);
         } catch (e) {
-            /* Returning a promise when no function is specified has not been implemented:
-             * https://developer.chrome.com/docs/extensions/reference/cookies/#method-getAll */
-            cookies = await browser.cookies.getAll(
-                { ...stores.filter, ...{ storeId: store.id } },
-                (cookies) => res(header.concat(cookies.map(formatCookie)).join(""))
-            );
+            cookiesObj = await browser.cookies.getAll( Object.assign({ storeId: store.id }, filter), (cookies) => res(header.concat(cookies.map(formatCookie)).join("")) );
         }
-    }
+    };
 
-    return cookies;
+    console.log(cookiesObj)
+
+    return res({
+        cookiesObj,
+        cookiesTxt: header.concat(cookiesObj.map(formatCookie)).join("")
+    });
 })
 // filter would include something like {url: "https://example.com"}
