@@ -1,8 +1,15 @@
 console.log(`ui loaded!`);
 
-const sendRequest = async ({
-    cookies=true
-}={}) => {
+const vars = {};
+
+const types = [{ type: `vars` }, { type: `state` }];
+
+let refreshState = () => {}
+let refreshState2 = null;
+
+const sendRequest = ({
+    cookies=false
+}={}) => new Promise(async res => {
     browser.tabs.query({ active: true, currentWindow: true }).then(async tabs => {
         const tab = tabs[0];
 
@@ -10,32 +17,36 @@ const sendRequest = async ({
             const url = tab.url;
 
             if(url) {
-                const obj = {
-                    query: url,
-                    cookies: cookies ? (await parseCookies({ url })) : null
+                console.log(tab);
+
+                refreshState2 = async (headers) => {
+                    console.log(`tabHeaders from background`, headers);
+
+                    if(!cookies) delete headers.Cookie;
+    
+                    const obj = { query: url, headers }
+    
+                    console.log(obj)
+    
+                    chrome.runtime.sendMessage({
+                        type: `send`,
+                        data: { type: `listFormats`, data: obj }
+                    });
                 }
+                
+                console.log(`sending tabHeaders request...`);
 
-                console.log(obj)
+                const headers = await chrome.runtime.sendMessage({ type: `tabHeaders`, data: tab.id });
 
-                chrome.runtime.sendMessage({
-                    type: `send`,
-                    data: {
-                        type: `listFormats`,
-                        data: [ obj ]
-                    }
-                });
+                console.log(`sent tabHeaders request!`, headers);
+
+                res();
             }
         }
     });
-}
-
-const vars = {};
-
-const types = [{ type: `vars` }, { type: `state` }];
+})
 
 const refreshVars = async () => chrome.runtime.sendMessage(types);
-
-let refreshState = () => {}
 
 const run = async () => {
     const containers = {
@@ -173,7 +184,7 @@ const run = async () => {
 
             authSend.querySelector(`#txt`).innerHTML = `Send webpage (with auth)`;
             authSend.setAttribute(`title`, `Send the current webpage to ezytdl, with authentication.`)
-            authSend.onclick = () => sendRequest();
+            authSend.onclick = () => sendRequest({ cookies: true });
 
             containers.buttons.append(authSend);
 
@@ -181,7 +192,7 @@ const run = async () => {
 
             sendPage.querySelector(`#txt`).innerHTML = `Send webpage`;
             sendPage.setAttribute(`title`, `Send the current webpage to ezytdl, without authentication.`)
-            sendPage.onclick = () => sendRequest({ cookies: false });
+            sendPage.onclick = () => sendRequest();
 
             containers.buttons.append(sendPage);
 
@@ -237,8 +248,12 @@ chrome.runtime.onMessage.addListener(({ type, data }) => {
     
         console.log(`refreshed vars`, vars)
     } else {
-        vars[type] = data;
-    }
+        if(refreshState2) {
+            refreshState2(data);
+            refreshState2 = null;
+        }
+    };
+
     refreshState();
 });
 

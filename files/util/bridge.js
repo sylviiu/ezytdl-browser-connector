@@ -10,6 +10,8 @@ const handle = ({ type, data }) => {
             return purge();
         case `send`:
             return send(data);
+        case `tabHeaders`:
+            return headersMap.has(data) ? headersMap.get(data) : [];
         case `vars`:
             return {vars, comms}
         case `state`:
@@ -19,7 +21,7 @@ const handle = ({ type, data }) => {
     }
 }
 
-chrome.runtime.onMessage.addListener(async o => {
+chrome.runtime.onMessage.addListener(async (o, sender, res) => {
     console.log(`received message!`, o);
 
     const single = !Array.isArray(o);
@@ -46,7 +48,13 @@ chrome.runtime.onMessage.addListener(async o => {
 
     if(promises.length) await Promise.all(promises);
 
-    chrome.runtime.sendMessage({ type: `refreshVars`, data: retObj });
+    if(single) {
+        chrome.runtime.sendMessage({ type: o.type, data: retObj[0] });
+        return res(retObj[0]);
+    } else {
+        chrome.runtime.sendMessage({ type: `refreshVars`, data: retObj });
+        return res(retObj);
+    }
 })
 
 chrome.action.onClicked.addListener(async (tab) => {
