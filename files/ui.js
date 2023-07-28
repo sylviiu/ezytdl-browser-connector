@@ -2,8 +2,6 @@ console.log(`ui loaded!`);
 
 const vars = {};
 
-const types = [{ type: `vars` }, { type: `state` }];
-
 let refreshState = () => {}
 let refreshState2 = null;
 
@@ -46,7 +44,7 @@ const sendRequest = ({
     });
 })
 
-const refreshVars = async () => chrome.runtime.sendMessage(types);
+const refreshVars = async () => chrome.runtime.sendMessage({ type: `refreshVars` });
 
 const run = async () => {
     const containers = {
@@ -210,7 +208,9 @@ const run = async () => {
     let statePromise = null;
 
     states.reset().then(async () => {
-        refreshState = async () => {
+        refreshState = async (forceRefresh) => {
+            if(forceRefresh) await refreshVars();
+
             if(statePromise) {
                 await statePromise;
             }
@@ -223,15 +223,22 @@ const run = async () => {
         
             if(vars.state.status != `reset` && states[vars.state.status]) {
                 const f = states[vars.state.status]();
-                if(f && f.then) statePromise = f;
+                if(f && f.then) {
+                    statePromise = f;
+                    await statePromise;
+                }
             }
+
+            //previousState = vars.state.status;
+
+            return vars;
         };
 
         while(!vars.state || !vars.state.status) await new Promise(async res => {
             await refreshVars();
 
             if(vars.state && vars.state.status) {
-                await refreshState();
+                await refreshState(true);
                 res();
             } else {
                 setTimeout(res, 100);
@@ -240,7 +247,9 @@ const run = async () => {
     })
 };
 
-chrome.runtime.onMessage.addListener(({ type, data }) => {
+chrome.runtime.onMessage.addListener(({ type, types, data }) => {
+    console.log(`received message!`, type, types, data);
+
     if(type == `refreshVars`) {
         for(const i in data) {
             Object.assign(vars, { [types[i].type]: data[i] });

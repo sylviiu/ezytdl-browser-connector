@@ -37,5 +37,7 @@ const setState = async (newState={}) => {
         };
 
         chrome.runtime.sendMessage({ type: `state`, data: stateObj.state });
+
+        bridgeHandler({ type: `refreshVars` }, null, ()=>{})
     }
 };

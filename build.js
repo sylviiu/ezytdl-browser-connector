@@ -3,6 +3,10 @@ const child_process = require('child_process');
 const https = require('https');
 const path = require('path');
 
+const buildNumber = Number(process.argv[process.argv.indexOf(`--build`) + 1]) || 1;
+
+console.log(`Build number: ${buildNumber}`);
+
 const filesDir = path.join(__dirname, `files`);
 const htmlDir = path.join(__dirname, `files`, `html`);
 const distDir = path.join(__dirname, `dist`);
@@ -14,7 +18,7 @@ const sources = require(`./sources.json`);
 const manifest = Object.assign({
     name: package.name,
     description: package.description,
-    version: package.version,
+    version: `${buildNumber}`,
 }, require(`./files/manifest.json`));
 
 const request = (url) => new Promise(async res => {

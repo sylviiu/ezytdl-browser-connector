@@ -1,6 +1,5 @@
 {
   "name": "ezytdl-browser-connector",
-  "version": "1.0.0",
   "description": "the browser connector for ezytdl",
   "main": "index.js",
   "scripts": {

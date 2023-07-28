@@ -21,8 +21,12 @@ const handle = ({ type, data }) => {
     }
 }
 
-chrome.runtime.onMessage.addListener(async (o, sender, res) => {
+const types = [{ type: `vars` }, { type: `state` }];
+
+const bridgeHandler = async (o, sender, res) => {
     console.log(`received message!`, o);
+
+    if(o.type == `refreshVars`) return bridgeHandler(types, sender, res);
 
     const single = !Array.isArray(o);
 
@@ -52,10 +56,12 @@ chrome.runtime.onMessage.addListener(async (o, sender, res) => {
         chrome.runtime.sendMessage({ type: o.type, data: retObj[0] });
         return res(retObj[0]);
     } else {
-        chrome.runtime.sendMessage({ type: `refreshVars`, data: retObj });
+        chrome.runtime.sendMessage({ type: `refreshVars`, types, data: retObj });
         return res(retObj);
     }
-})
+}
+
+chrome.runtime.onMessage.addListener(bridgeHandler)
 
 chrome.action.onClicked.addListener(async (tab) => {
     console.log(`clicked!`, tab);
