@@ -61,7 +61,7 @@ const run = async () => {
         disconnected: () => {
             title.innerHTML = `Disconnected`;
 
-            description.innerHTML = `It looks like you haven't connected to the application yet!<br><br>To connect to ezytdl, make sure the browser connector is enabled in the settings, and click the button below.`;
+            description.innerHTML = `It looks like you haven't connected to the application yet!<br><br>To connect to ezytdl, make sure the browser connector is enabled in the settings, and click the button below.<br><br>You can find ezytdl <a href="https://github.com/sylviiu/ezytdl/">on GitHub.</a>`;
 
             const pairBtn = button.cloneNode(true);
 
