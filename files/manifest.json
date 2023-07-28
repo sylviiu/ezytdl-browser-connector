@@ -10,7 +10,7 @@
     },
     "background": {},
     "host_permissions": [ "*://*/*" ],
-    "permissions": [ "tabs", "storage", "cookies", "webRequest", "webRequestBlocking" ],
+    "permissions": [ "contextMenus", "tabs", "storage", "cookies", "webRequest", "webRequestBlocking" ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
     }
