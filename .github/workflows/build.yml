@@ -101,7 +101,7 @@ jobs:
         run: |
           for dir in dist/*; do
             if [ -d "$dir" ]; then
-              7z a -r "$dir.zip" "$dir/*"
+              7z a -r "$dir.zip" "./$dir/*"
             fi
           done
           ls -lah dist
