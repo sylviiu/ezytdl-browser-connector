@@ -95,7 +95,7 @@ const cleanup = () => {
             
             await exec(`init`, `git`, [`init`])
             
-            await exec(`remote`, `git`, [`remote`, `add`, `--no-tags`, `-f`, `origin`, sources.ezytdl.url])
+            await exec(`remote`, `git`, [`remote`, `add`, `--no-tags`, `origin`, sources.ezytdl.url])
             
             console.log(`Enabling sparse checkout...`)
         
