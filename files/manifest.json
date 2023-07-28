@@ -8,9 +8,8 @@
     "icons": {
         "64": "res/icon-enabled.png"
     },
-    "background": {},
     "host_permissions": [ "*://*/*" ],
-    "permissions": [ "contextMenus", "tabs", "storage", "cookies", "webRequest", "webRequestBlocking" ],
+    "permissions": [ "contextMenus", "activeTab", "storage", "cookies", "webRequest" ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
     }

@@ -9,7 +9,8 @@ module.exports = ({ targetDir, utilScripts }) => {
 
     return {
         background: {
-            service_worker: "connection.js"
+            service_worker: "connection.js",
+            //persistent: true
         }
     }
 }
