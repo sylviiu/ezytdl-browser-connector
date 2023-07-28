@@ -129,7 +129,7 @@ const cleanup = () => {
 
         const spacing = html.split(`</head`)[0].split(`\n`).filter(o => o.trim()).slice(-1)[0].split(`<`)[0];
 
-        const scripts = [`ui.js`, `cookie.js`];
+        const scripts = [`ui.js`];
 
         for(const script of scripts) {
             if(!html.includes(script)) {

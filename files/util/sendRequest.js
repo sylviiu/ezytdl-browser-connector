@@ -7,17 +7,22 @@ const sendRequest = ({
 
     console.log(`sendRequest`, { cookies, tab, url });
 
-    const parseWithUrl = (url, headers) => {
-        console.log(`parseWithUrl`, url, headers);
+    const parseWithUrl = async (url, headers) => {
+        const useCookies = cookies ? (await getCookies(url)) : null;
+        
+        console.log(`parseWithUrl`, url, headers, useCookies);
 
         const obj = { 
             query: url, 
-            headers: headers
+            headers: headers,
+            cookies: useCookies
         }
 
         console.log(`sendRequest obj`, obj)
 
-        send({ type: `listFormats`, data: obj }).then(res);
+        await send({ type: `listFormats`, data: obj });
+
+        res();
     };
 
     const getCommonHeaders = () => {
@@ -36,34 +41,13 @@ const sendRequest = ({
 
         const tabHeaders = headersMap.has(tab.id) ? headersMap.get(tab.id) : {};
 
-        console.log(`tabHeaders from background`, tabHeaders);
-
         if(tabHeaders['Referer']) headers['Referer'] = tabHeaders['Referer']
-        if(tabHeaders['Cookie'] && cookies) headers.Cookie = tabHeaders['Cookie'];
         
         parseWithUrl(tab.url, headers);
     }
 
     if(url) {
         let headers = getCommonHeaders();
-
-        if(cookies) {
-            const parsedURL = new URL(url);
-
-            const filter = (o, secure) => o.filter(o2 => secure ? o2.secure : !o2.secure).map(o2 => `${o2.name}=${o2.value}`).join(`; `)
-
-            console.log(`parsedURL`, parsedURL)
-
-            const cookie = await browser.cookies.getAll({ domain: parsedURL.hostname.split(`.`).slice(-2).join(`.`) });
-
-            console.log(`cookie`, cookie)
-
-            const filteredCookie = filter(cookie, parsedURL.protocol == `https:`);
-
-            console.log(`filteredCookie`, filteredCookie)
-            
-            if(filteredCookie) headers.Cookie = filteredCookie;
-        }
 
         parseWithUrl(url, headers)
     } else {
