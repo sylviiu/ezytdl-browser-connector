@@ -1,4 +1,7 @@
-let send = () => {};
+let send = (data) => {
+    console.log(`socket not ready! (reset)`, data);
+    Promise.resolve(addPending(data));
+}
 
 const resetSend = () => {
     send = (data) => {
