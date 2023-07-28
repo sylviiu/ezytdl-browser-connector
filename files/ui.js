@@ -5,44 +5,7 @@ const vars = {};
 let refreshState = () => {}
 let refreshState2 = null;
 
-const sendRequest = ({
-    cookies=false
-}={}) => new Promise(async res => {
-    browser.tabs.query({ active: true, currentWindow: true }).then(async tabs => {
-        const tab = tabs[0];
-
-        if(tab) {
-            const url = tab.url;
-
-            if(url) {
-                console.log(tab);
-
-                refreshState2 = async (headers) => {
-                    console.log(`tabHeaders from background`, headers);
-
-                    if(!cookies) delete headers.Cookie;
-    
-                    const obj = { query: url, headers }
-    
-                    console.log(obj)
-    
-                    chrome.runtime.sendMessage({
-                        type: `send`,
-                        data: { type: `listFormats`, data: obj }
-                    });
-                }
-                
-                console.log(`sending tabHeaders request...`);
-
-                const headers = await chrome.runtime.sendMessage({ type: `tabHeaders`, data: tab.id });
-
-                console.log(`sent tabHeaders request!`, headers);
-
-                res();
-            }
-        }
-    });
-})
+const sendRequest = () => chrome.runtime.sendMessage({ type: `sendRequest` });
 
 const refreshVars = async () => chrome.runtime.sendMessage({ type: `refreshVars` });
 

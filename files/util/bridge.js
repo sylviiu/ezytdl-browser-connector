@@ -10,6 +10,8 @@ const handle = ({ type, data }) => {
             return purge();
         case `send`:
             return send(data);
+        case `sendRequest`:
+            return sendRequest(data);
         case `tabHeaders`:
             return headersMap.has(data) ? headersMap.get(data) : [];
         case `vars`:
