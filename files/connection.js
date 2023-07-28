@@ -6,6 +6,8 @@ if(typeof importScripts == `function`) {
     console.log(`loaded ${scripts.length} scripts! (${scripts.map(s => s.split(`/`).slice(-1)[0]).join(`, `)})`)
 }
 
+console.log(`vars`, vars)
+
 setState({ status: `disconnected` });
 
 let usingSocket = null;
