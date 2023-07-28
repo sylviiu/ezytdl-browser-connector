@@ -14,6 +14,8 @@ const buildDir = path.join(__dirname, `build`);
 
 const utilScripts = fs.readdirSync(`./files/util`).map(s => `util/${s}`);
 
+console.log(`Util scripts: [ "${utilScripts.join(`", "`)}" ]`);
+
 const package = require(`./package.json`);
 const sources = require(`./sources.json`);
 
