@@ -1,7 +1,5 @@
 const headersMap = new Map();
 
-if(typeof browser == `undefined`) var browser = chrome;
-
 browser.webRequest.onBeforeSendHeaders.addListener(details => {
     if(details.type == `main_frame` && details.tabId != -1) {
         const headersObj = {};
@@ -12,7 +10,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(details => {
 
         console.log("Tab opened - Tab ID:", details.tabId, headersObj);
     }
-}, { urls: [`<all_urls>`], types: [`main_frame`] }, [`blocking`, `requestHeaders`]);
+}, { urls: [`<all_urls>`], types: [`main_frame`] }, [`requestHeaders`]);
 
 browser.tabs.onRemoved.addListener((tabId) => {
     console.log("Tab closed - Tab ID:", tabId);
