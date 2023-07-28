@@ -1,4 +1,4 @@
-name: ezytdl nightly distributable build
+name: ezytdl browser connector distributable
 run-name: ${{ github.actor }} - ${{ github.event_name }} - ${{ github.sha }}
 
 on:
@@ -97,13 +97,14 @@ jobs:
         run: |
           node build --build ${{ github.run_number }}
 
-      - name: Compress all dist dirs
+      - name: Compress all dist dirs into zips
         run: |
           for dir in dist/*; do
             if [ -d "$dir" ]; then
-              7z a -r dist/$dir dist/$dir.zip
+              7z a -r $dir $dir.zip
             fi
           done
+          ls -lah dist
 
       - name: Upload zip
         uses: xresloader/upload-to-github-release@main
