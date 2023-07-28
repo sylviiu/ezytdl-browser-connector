@@ -12,6 +12,8 @@ const htmlDir = path.join(__dirname, `files`, `html`);
 const distDir = path.join(__dirname, `dist`);
 const buildDir = path.join(__dirname, `build`);
 
+const utilScripts = fs.readdirSync(`./files/util`).map(s => `util/${s}`);
+
 const package = require(`./package.json`);
 const sources = require(`./sources.json`);
 
@@ -144,14 +146,18 @@ const cleanup = () => {
     
         console.log(`Creating ${manifestFiles.length} output dirs... (${manifestFiles.map(o => o.name).join(`, `)})`);
     
-        for(const { name, manifestExt } of manifestFiles) {
+        for(let { name, manifestExt } of manifestFiles) {
+            const thisManifest = Object.assign({}, manifest)
+
             const targetDir = path.join(distDir, name);
     
             if(fs.existsSync(targetDir)) fs.rmSync(targetDir, { recursive: true, force: true });
 
             fs.cpSync(filesDir, targetDir, { recursive: true });
+
+            if(typeof manifestExt == `function`) manifestExt = await manifestExt({ targetDir, buildNumber, utilScripts, thisManifest });
             
-            fs.writeFileSync(path.join(targetDir, `manifest.json`), JSON.stringify(Object.assign({}, manifest, manifestExt), null, 4));
+            fs.writeFileSync(path.join(targetDir, `manifest.json`), JSON.stringify(Object.assign({}, thisManifest, manifestExt), null, 4));
 
             console.log(`Created dir for ${name}...`);
         }

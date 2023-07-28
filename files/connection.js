@@ -1,15 +1,6 @@
+const scripts = [];
+
 if(typeof importScripts == `function`) {
-    const scripts = [
-        "util/bridge.js",
-        "util/state.js",
-        "util/constants.js",
-        "util/pending.js",
-        "util/comms.js",
-        "util/system.js",
-        "util/encryptMessage.js",
-        "util/pemToBinary.js"
-    ];
-    
     importScripts(...scripts.map(s => `./${s}`));
     
     console.log(`loaded ${scripts.length} scripts! (${scripts.map(s => s.split(`/`).slice(-1)[0]).join(`, `)})`)
