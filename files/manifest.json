@@ -9,7 +9,7 @@
         "64": "res/icon-enabled.png"
     },
     "host_permissions": [ "*://*/*" ],
-    "permissions": [ "contextMenus", "activeTab", "storage", "cookies", "webRequest" ],
+    "permissions": [ "contextMenus", "storage", "cookies" ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
     }

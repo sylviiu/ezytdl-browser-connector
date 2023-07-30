@@ -1,22 +1,22 @@
 const contextMenus = {
     "send-with-cookies": {
         title: `Send to ezytdl (with cookies)`,
-        handler: ({info, tab}) => sendRequest({ cookies: true, tab, url: info.linkUrl || (!headersMap.has(tab.id) ? info.pageUrl : null) })
+        handler: ({info}) => sendRequest({ cookies: true, url: info.linkUrl || info.pageUrl })
     },
     "send-plain": {
         title: `Send to ezytdl`,
-        handler: ({info, tab}) => sendRequest({ tab, url: info.linkUrl || (!headersMap.has(tab.id) ? info.pageUrl : null) })
+        handler: ({info}) => sendRequest({ url: info.linkUrl || info.pageUrl })
     }
 }
 
 console.log(`creating context menu listener!`);
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener((info) => {
     const thisContext = contextMenus[info.menuItemId];
 
-    console.log(`context menu clicked!`, info, tab, thisContext);
+    console.log(`context menu clicked!`, info, thisContext);
 
-    if(thisContext && thisContext.handler) thisContext.handler({ info, tab });
+    if(thisContext && thisContext.handler) thisContext.handler({ info });
 });
 
 if(chrome.runtime.lastError) console.error(`failed to create context menu listener!`, chrome.runtime.lastError);

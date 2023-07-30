@@ -12,8 +12,6 @@ const handle = ({ type, data }) => {
             return send(data);
         case `sendRequest`:
             return sendRequest(data);
-        case `tabHeaders`:
-            return headersMap.has(data) ? headersMap.get(data) : [];
         case `vars`:
             return {vars, comms}
         case `state`:
