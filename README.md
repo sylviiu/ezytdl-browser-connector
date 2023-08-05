@@ -14,7 +14,7 @@ Browser extension that connects to the ezytdl app.
 </a>
 
 <a class="col-sm-1" href="https://github.com/sylviiu/ezytdl-browser-connector/releases/latest">
-  <img src="https://img.shields.io/badge/DOWNLOAD-black?label=GitHub Releases Zip Builds&style=for-the-badge&logoColor=white&labelColor=black&color=black"/>
+  <img src="https://img.shields.io/badge/DOWNLOAD-black?label=Zip Builds&style=for-the-badge&&logo=github&logoColor=white&labelColor=black&color=black"/>
 </a>
 
 ---
