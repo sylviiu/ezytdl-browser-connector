@@ -6,4 +6,9 @@ const addPending = (data) => {
 }
 
 const sendPending = () => new Promise(async res => {
+    while(pendingMessages.length > 0) {
+        await send(pendingMessages.shift());
+    };
+
+    res();
 })
