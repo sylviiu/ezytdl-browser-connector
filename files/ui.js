@@ -141,21 +141,7 @@ const run = async () => {
 
             description.innerHTML += smallerDescription.outerHTML;
 
-            const authSend = button.cloneNode(true);
-
-            authSend.querySelector(`#txt`).innerHTML = `Send webpage (with auth)`;
-            authSend.setAttribute(`title`, `Send the current webpage to ezytdl, with authentication.`)
-            authSend.onclick = () => sendRequest({ cookies: true });
-
-            containers.buttons.append(authSend);
-
-            const sendPage = button.cloneNode(true);
-
-            sendPage.querySelector(`#txt`).innerHTML = `Send webpage`;
-            sendPage.setAttribute(`title`, `Send the current webpage to ezytdl, without authentication.`)
-            sendPage.onclick = () => sendRequest();
-
-            containers.buttons.append(sendPage);
+            description.innerHTML += `<br>To send a request to the application, right click on a link or page and find "Send to ezytdl" in the context menu.`;
 
             const cancel = button.cloneNode(true);
 
